@@ -5,6 +5,56 @@
     <title>Title</title>
 </head>
 <body>
+<div style="float: left; width: 400px; height: 600px;" >
+                <h1>Добавление предприятия</h1>
+                <input type="hidden" id="factoryId" />
+                <p>
+                    Название предприятия:<br/>
+                    <input id="factoryName" />
+                </p>
+                <p>
+                    Водопользование предприятия:<br />
+                    <input id="waterUseType" />
+                </p>
+                <p>
+                    <button id="saveFactoryBtn">Сохранить</button>
+                </p>
+            </div>
+<div style="float: left; width: 400px;">
+            <h1>Удаление предприятия</h1>
+            <form id="search-form1">
+                <label>Название предприятия</label>
+                <div>
+                    <input id="search_input1" type="text" name="quere1" value="">
+                </div>
+                <button type="submit" id="deleteFactoryBtn">Удалить</button>
+            </form>
+            <ul id="found-values1"></ul>
+        </div>
+<div style="float: left; width: 400px;">
+            <h1>Редактирование предприятия</h1>
+            <p>
+                Номер предприятия:<br/>
+                <input type="number" id="editFactoryId" />
+            </p>
+            <p>
+                Название предприятия:<br/>
+                <input type="text" id="editFactoryName" />
+            </p>
+            <p>
+                Водопользование предприятия:<br />
+                <input type="text" id="editWaterUseType" />
+            </p>
+            <p>
+                <button id="editFactoryBtn">Сохранить</button>
+            </p>
+        </div>
+<h1>Таблица предприятий</h1>
+<table id="factoryTable">
+        <thead> <th>Номер</th> <th>Название предприятия</th> <th>Водопользование предприятия</th><th>Контрольный створ</th></thead>
+        <tbody>
+        </tbody>
+    </table>
 
 </body>
 </html>

@@ -83,9 +83,6 @@ class SubstanceToDrop(Base):
     Drop = relationship('Drop', backref='substances')
 
 
-engine = create_engine('sqlite:///example.db')
-Base.metadata.create_all(engine)
-
 Base.metadata.create_all(bind=engine)
 
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
