@@ -1,0 +1,20 @@
+digraph "#PBZ_l2" {
+
+splines  = ortho;
+fontname = "Inconsolata";
+
+node [colorscheme = ylgnbu4];
+edge [colorscheme = dark28, dir = both];
+
+"DataBase.Drop"                      [shape = record, label = "{ DataBase.Drop |  angle_about_water : Integer\l  date : String\l  diameter : Integer\l  distance_to_coast : Integer\l  distance_to_surface : Integer\l  drop_name : String\l  id : Integer\l  min_water_speed : Integer\l  water_consumption : Integer\l }"];
+"DataBase.DropToTarget"              [shape = record, label = "{ DataBase.DropToTarget |  distance : Integer\l  drop_id : Integer\l  id : Integer\l  target_id : Integer\l }"];
+"DataBase.Factory"                   [shape = record, label = "{ DataBase.Factory |  factory_name : String\l  id : Integer\l  water_use_type : String\l }"];
+"DataBase.FactoryToDrop"             [shape = record, label = "{ DataBase.FactoryToDrop |  drop_id : Integer\l  factory_id : Integer\l  id : Integer\l }"];
+"DataBase.Substance"                 [shape = record, label = "{ DataBase.Substance |  danger_class : Integer\l  group : Integer\l  id : Integer\l  knk : Integer\l  lvf : Integer\l  substance_name : String\l }"];
+"DataBase.SubstanceToDrop"           [shape = record, label = "{ DataBase.SubstanceToDrop |  concentration_in_drop : Integer\l  concentration_in_target : Integer\l  drop_id : Integer\l  id : Integer\l  pdk : Integer\l  substance_id : Integer\l  target_id : Integer\l }"];
+"DataBase.Target"                    [shape = record, label = "{ DataBase.Target |  id : Integer\l  target_name : String\l }"];
+"DataBase.WaterUseTypeToDangerClass" [shape = record, label = "{ DataBase.WaterUseTypeToDangerClass |  danger_class : Integer\l  id : Integer\l  water_use_type : String\l }"];
+"DataBase.WaterUseTypeToLvf"         [shape = record, label = "{ DataBase.WaterUseTypeToLvf |  id : Integer\l  lvf : Integer\l  water_use_type : String\l }"];
+
+
+}

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        .container{overflow:hidden;width:200px}
+        .box{white-space:nowrap}
+        .box div{width:90px;display:inline-block;border:1px solid black}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#search-form1").on("submit", function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: "/delete_factory",
+                    type: "GET",
+                    data: {query1: $("#search_input1").val()},
+                    success: function(result) {
+                        $("#found-values1").empty();
+                        if (result.found_values1.length > 0) {
+                            $.each(result.found_values1, function(i, value) {
+                                $("#found-values").append("<li>" + value.id + value.factory_name  + "\t" +  value.water_use_type + "</li>");
+                            });
+                        } else {
+                            $("#found-values1").append("<li>Ничего не найдено</li>");
+                        }
+                    },
+                    error: function() {
+                        $("#found-values1").empty().append("<li>Ошибка при выполнении запроса</li>");
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#search-form2").on("submit", function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: "/delete_drop",
+                    type: "GET",
+                    data: {query2: $("#search_input2").val()},
+                    success: function(result) {
+                        $("#found-values2").empty();
+                        if (result.found_values2.length > 0) {
+                            $.each(result.found_values2, function(i, value) {
+                                $("#found-values").append("<li>" + value.id + value.drop_name  + "\t" +  value.diameter +
+                                    value.min_water_speed  + "\t" +  value.water_consumption +
+                                    value.angle_about_water  + "\t" +  value.distance_to_surface +
+                                    value.distance_to_coast  + "\t" +  value.date +"</li>");
+                            });
+                        } else {
+                            $("#found-values2").append("<li>Ничего не найдено</li>");
+                        }
+                    },
+                    error: function() {
+                        $("#found-values2").empty().append("<li>Ошибка при выполнении запроса</li>");
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#search-form3").on("submit", function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: "/delete_drop_to_target",
+                    type: "GET",
+                    data: {query3: $("#search_input3").val(), query4: $("#search_input4").val()},
+                    success: function(result) {
+                        $("#found-values2").empty();
+                        if (result.found_values3.length > 0) {
+                            $.each(result.found_values3, function(i, value) {
+                                $("#found-values").append("<li>" + value.id + value.drop_id  + "\t" +  value.target_id +
+                                    value.distance  + "</li>");
+                            });
+                        } else {
+                            $("#found-values3").append("<li>Ничего не найдено</li>");
+                        }
+                    },
+                    error: function() {
+                        $("#found-values3").empty().append("<li>Ошибка при выполнении запроса</li>");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div style="overflow: hidden;">
+            <div style="float: left; width: 400px; height: 600px;" >
+                <h1>Добавление предприятия</h1>
+                <input type="hidden" id="factoryId" />
+                <p>
+                    Название предприятия:<br/>
+                    <input id="factoryName" />
+                </p>
+                <p>
+                    Водопользование предприятия:<br />
+                    <input id="waterUseType" />
+                </p>
+                <p>
+                    <button id="saveFactoryBtn">Сохранить</button>
+                </p>
+            </div>
+            <div style="float: left; width: 400px; height: 600px;">
+                <h1>Добавление выпуска</h1>
+                <input type="hidden" id="dropId" />
+                <p>
+                    Название сброса:<br/>
+                    <input id="dropName" />
+                </p>
+                <p>
+                    Диаметр:<br />
+                    <input id="Diameter" type="number" />
+                </p>
+                <p>
+                    Минимальная скорость воды:<br/>
+                    <input id="minWaterSpeed" type="number" />
+                </p>
+                <p>
+                    Расход воды:<br />
+                    <input id="waterConsumption" type="number" />
+                </p>
+                <p>
+                    Угол падения воды:<br/>
+                    <input id="angleAboutWater" type="number" />
+                </p>
+                <p>
+                    Дистанция до поверхности:<br />
+                    <input id="distanceToSurface" type="number" />
+                </p>
+                <p>
+                    Дистанция до берега:<br/>
+                    <input id="distanceToCoast" type="number" />
+                </p>
+                <p>
+                    Дата:<br />
+                    <input id="date_" />
+                </p>
+                <p>
+                    <button id="saveDropBtn">Сохранить</button>
+                </p>
+            </div>
+            <div style="float: left; width: 400px; height: 600px;">
+                <h1>Добавление дистанции</h1>
+                <input type="hidden" id="dropToTargetId" />
+                <p>
+                    Номер сброса:<br/>
+                    <input id="drop" type="number" />
+                </p>
+                <p>
+                    Номер створа:<br />
+                    <input id="target" type="number" />
+                </p>
+                <p>
+                    Дистанция:<br/>
+                    <input id="distanceDropToTarget" type="number" />
+                </p>
+                <p>
+                    <button id="saveDropToTargetBtn">Сохранить</button>
+                </p>
+            </div>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="float: left; width: 400px;">
+            <h1>Удаление предприятия</h1>
+            <form id="search-form1">
+                <label>Название предприятия</label>
+                <div>
+                    <input id="search_input1" type="text" name="quere1" value="">
+                </div>
+                <button type="submit" id="deleteFactoryBtn">Удалить</button>
+            </form>
+            <ul id="found-values1"></ul>
+        </div>
+        <div style="float: left; width: 400px;">
+            <h1>Удаление сброса</h1>
+            <form id="search-form2">
+                <label>Название сброса</label>
+                <div>
+                    <input id="search_input2" type="text" name="quere2" value="">
+                </div>
+                <button type="submit" id="deleteDropBtn">Удалить</button>
+            </form>
+            <ul id="found-values2"></ul>
+        </div>
+        <div style="float: left; width: 400px;">
+            <h1>Удаление дистаници</h1>
+            <form id="search-form3">
+                <label>Номер створа</label>
+                <div>
+                    <input id="search_input3" type="number" name="quere3" value="">
+                </div>
+                <label>Номер сброса</label>
+                <div>
+                    <input id="search_input4" type="number" name="quere4" value="">
+                </div>
+                <button type="submit" id="deleteDropToTargetBtn">Удалить</button>
+            </form>
+            <ul id="found-values3"></ul>
+        </div>
+    </div>
+    <div style="overflow: hidden;">
+        <div style="float: left; width: 400px;">
+            <h1>Редактирование предприятия</h1>
+            <p>
+                Номер предприятия:<br/>
+                <input type="number" id="editFactoryId" />
+            </p>
+            <p>
+                Название предприятия:<br/>
+                <input type="text" id="editFactoryName" />
+            </p>
+            <p>
+                Водопользование предприятия:<br />
+                <input type="text" id="editWaterUseType" />
+            </p>
+            <p>
+                <button id="editFactoryBtn">Сохранить</button>
+            </p>
+        </div>
+        <div style="float: left; width: 400px;">
+            <h1>Редактирование выпуска</h1>
+            <p>
+                Номер сброса:<br/>
+                <input type="number" id="editDropId" />
+            </p>
+            <p>
+                Название сброса:<br/>
+                <input id="editDropName" />
+            </p>
+            <p>
+                Диаметр:<br />
+                <input id="editDropDiameter" type="number" />
+            </p>
+            <p>
+                Минимальная скорость воды:<br/>
+                <input id="editDropMinWaterSpeed" type="number" />
+            </p>
+            <p>
+                Расход воды:<br />
+                <input id="editDropWaterConsumption" type="number" />
+            </p>
+            <p>
+                Угол падения воды:<br/>
+                <input id="editDropAngleAboutWater" type="number" />
+            </p>
+            <p>
+                Дистанция до поверхности:<br />
+                <input id="editDropDistanceToSurface" type="number" />
+            </p>
+            <p>
+                Дистанция до берега:<br/>
+                <input id="editDropDistanceToCoast" type="number" />
+            </p>
+            <p>
+                Дата:<br />
+                <input id="editDropDate" />
+            </p>
+            <p>
+                <button id="editDropBtn">Сохранить</button>
+            </p>
+        </div>
+    </div>
+    
+    <h1>Таблица предприятий</h1>
+    <table id="factoryTable">
+        <thead> <th>Номер</th> <th>Название предприятия</th> <th>Водопользование предприятия</th></thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        async function createFactory(factoryName, waterUseType) {
+        const response = await fetch("/api/factory", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    factory_name : factoryName,
+                    water_use_type : waterUseType
+                })
+            });
+            if (response.ok === true) {
+                const factory = await response.json();
+                document.querySelector("tbody").append(rowFactory(factory));
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+        function resetFactory() {
+        document.getElementById("factoryName").value =
+        document.getElementById("waterUseType").value = "";
+        }
+
+        document.getElementById("saveFactoryBtn").addEventListener("click", async () => {
+        const factory_name = document.getElementById("factoryName").value;
+        const water_use_type = document.getElementById("waterUseType").value;
+        await createFactory(factory_name, water_use_type);
+        resetFactory();
+        });
+        async function editFactory(factoryId, factoryName, waterUseType) {
+        const response = await fetch("/api/update_factory", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    factory_id : parseInt(factoryId, 10),
+                    factory_name : factoryName,
+                    water_use_type : waterUseType
+                })
+            });
+            if (response.ok === true) {
+                const factory = await response.json();
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+        function resetEditFactory() {
+        document.getElementById("editFactoryId").value =
+        document.getElementById("editFactoryName").value =
+        document.getElementById("editWaterUseType").value = "";
+        }
+
+        document.getElementById("editFactoryBtn").addEventListener("click", async () => {
+        const factory_id = document.getElementById("editFactoryId").value;
+        const factory_name = document.getElementById("editFactoryName").value;
+        const water_use_type = document.getElementById("editWaterUseType").value;
+        await editFactory(factory_id, factory_name, water_use_type);
+        resetEditFactory();
+        });
+
+        async function getFactories() {
+            const response = await fetch("/api/factory", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const factories = await response.json();
+                const rows = document.querySelector("#factoryTable");
+                factories.forEach(factory => rows.append(rowFactory(factory)));
+            }
+        }
+
+        function rowFactory(factory) {
+
+            const factory_temp = document.createElement("tr");
+            factory_temp.setAttribute("data-rowid", factory.id);
+
+            const factory_idTd = document.createElement("td");
+            factory_idTd.append(factory.id);
+            factory_temp.append(factory_idTd);
+
+            const factory_nameTd = document.createElement("td");
+            factory_nameTd.append(factory.factory_name);
+            factory_temp.append(factory_nameTd);
+
+            const water_use_typeTd = document.createElement("td");
+            water_use_typeTd.append(factory.water_use_type);
+            factory_temp.append(water_use_typeTd);
+
+            return factory_temp;
+        }
+
+        getFactories();
+        async function delete_factory(search_input1) {
+
+        const response = await fetch("/api/factory", {
+                method: "DELETE",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    value : 1,
+                    factory_name : search_input1,
+                })
+            });
+            if (response.ok === true) {
+                const factory = await response.json();
+
+            } else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+
+        document.getElementById("deleteFactoryBtn").addEventListener("click", async () => {
+        const factory_name = document.getElementById("search_input1").value;
+        await new Promise(r => setTimeout(r, 50));
+        await delete_factory(factory_name);
+        });
+    </script>
+    <h1>Таблица сбросов</h1>
+    <table id="dropTable">
+        <thead> <th>Номер</th> <th>Название сброса</th> <th>Диаметр</th> <th>Скорость воды</th>  <th>Потребление воды</th>
+        <th>Угол относительно поверхности</th> <th>Расстояние до поверхности</th> <th>Расстояние до берега</th> <th>Дата</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        async function createDrop(dropName, Diameter, minWaterSpeed, waterConsumption, angleAboutWater,
+                               distanceToSurface, distanceToCoast, date_) {
+        const response = await fetch("/api/drop", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                        drop_name : dropName,
+                        diameter : parseInt(Diameter, 10),
+                        min_water_speed : parseInt(minWaterSpeed, 10),
+                        water_consumption : parseInt(waterConsumption, 10),
+                        angle_about_water : parseInt(angleAboutWater, 10),
+                        distance_to_surface : parseInt(distanceToSurface, 10),
+                        distance_to_coast : parseInt(distanceToCoast, 10),
+                        date : date_
+                })
+            });
+            if (response.ok === true) {
+                const drop = await response.json();
+                document.querySelector("tbody").append(rowDrop(drop));
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+        function resetDrop() {
+        document.getElementById("dropName").value =
+        document.getElementById("Diameter").value =
+        document.getElementById("minWaterSpeed").value =
+        document.getElementById("waterConsumption").value =
+        document.getElementById("angleAboutWater").value =
+        document.getElementById("distanceToSurface").value =
+        document.getElementById("distanceToCoast").value =
+        document.getElementById("date_").value = "";
+        }
+
+        document.getElementById("saveDropBtn").addEventListener("click", async () => {
+        const drop_name = document.getElementById("dropName").value;
+        const diameter = document.getElementById("Diameter").value;
+        const min_water_speed = document.getElementById("minWaterSpeed").value;
+        const water_consumption = document.getElementById("waterConsumption").value;
+        const angle_about_water = document.getElementById("angleAboutWater").value;
+        const distance_to_surface = document.getElementById("distanceToSurface").value;
+        const distance_to_coast = document.getElementById("distanceToCoast").value;
+        const date = document.getElementById("date_").value;
+        await createDrop(drop_name, diameter, min_water_speed, water_consumption,
+                            angle_about_water, distance_to_surface, distance_to_coast, date);
+        resetDrop();
+    });
+
+        async function editDrop(dropId, dropName, Diameter, minWaterSpeed, waterConsumption, angleAboutWater,
+                               distanceToSurface, distanceToCoast, date_) {
+        const response = await fetch("/api/update_drop", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                        drop_id : parseInt(dropId, 10),
+                        drop_name : dropName,
+                        diameter : parseInt(Diameter, 10),
+                        min_water_speed : parseInt(minWaterSpeed, 10),
+                        water_consumption : parseInt(waterConsumption, 10),
+                        angle_about_water : parseInt(angleAboutWater, 10),
+                        distance_to_surface : parseInt(distanceToSurface, 10),
+                        distance_to_coast : parseInt(distanceToCoast, 10),
+                        date : date_
+                })
+            });
+            if (response.ok === true) {
+                const drop = await response.json();
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+
+        document.getElementById("editDropBtn").addEventListener("click", async () => {
+        const drop_name = document.getElementById("editDropName").value;
+        const drop_id = document.getElementById("editDropId").value;
+        const diameter = document.getElementById("editDropDiameter").value;
+        const min_water_speed = document.getElementById("editDropMinWaterSpeed").value;
+        const water_consumption = document.getElementById("editDropWaterConsumption").value;
+        const angle_about_water = document.getElementById("editDropAngleAboutWater").value;
+        const distance_to_surface = document.getElementById("editDropDistanceToSurface").value;
+        const distance_to_coast = document.getElementById("editDropDistanceToCoast").value;
+        const date = document.getElementById("editDropDate").value;
+        await editDrop(drop_id, drop_name, diameter, min_water_speed, water_consumption,
+                            angle_about_water, distance_to_surface, distance_to_coast, date);
+    });
+        async function getDrops() {
+            const response = await fetch("/api/drop", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const drops = await response.json();
+                const rows = document.querySelector("#dropTable");
+                drops.forEach(drop => rows.append(rowDrop(drop)));
+            }
+        }
+
+        getDrops();
+        async function delete_drop(search_input2) {
+
+            const response = await fetch("/api/drop", {
+                    method: "DELETE",
+                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        value : 1,
+                        drop_name : search_input2,
+                    })
+                });
+                if (response.ok === true) {
+                    const drop = await response.json();
+
+                } else {
+                    const error = await response.json();
+                    console.log(error.message);
+                }
+        }
+
+        function rowDrop(drop) {
+
+            const drop_temp = document.createElement("tr");
+            drop_temp.setAttribute("data-rowid", drop.id);
+
+            const drop_idTd = document.createElement("td");
+            drop_idTd.append(drop.id);
+            drop_temp.append(drop_idTd);
+
+            const drop_nameTd = document.createElement("td");
+            drop_nameTd.append(drop.drop_name);
+            drop_temp.append(drop_nameTd);
+
+            const drop_diameterTd = document.createElement("td");
+            drop_diameterTd.append(drop.diameter);
+            drop_temp.append(drop_diameterTd);
+
+            const drop_min_water_speedTd = document.createElement("td");
+            drop_min_water_speedTd.append(drop.min_water_speed);
+            drop_temp.append(drop_min_water_speedTd);
+
+
+            const drop_water_consumptionTd = document.createElement("td");
+            drop_water_consumptionTd.append(drop.water_consumption);
+            drop_temp.append(drop_water_consumptionTd);
+
+            const drop_angle_about_waterTd = document.createElement("td");
+            drop_angle_about_waterTd.append(drop.angle_about_water);
+            drop_temp.append(drop_angle_about_waterTd);
+
+            const drop_distance_to_surfaceTd = document.createElement("td");
+            drop_distance_to_surfaceTd.append(drop.distance_to_surface);
+            drop_temp.append(drop_distance_to_surfaceTd);
+
+            const drop_distance_to_coastTd = document.createElement("td");
+            drop_distance_to_coastTd.append(drop.distance_to_coast);
+            drop_temp.append(drop_distance_to_coastTd);
+
+            const drop_dateTd = document.createElement("td");
+            drop_dateTd.append(drop.date);
+            drop_temp.append(drop_dateTd);
+
+            return drop_temp;
+        }
+
+        document.getElementById("deleteDropBtn").addEventListener("click", async () => {
+        const drop_name = document.getElementById("search_input2").value;
+        await new Promise(r => setTimeout(r, 50));
+        await delete_drop(drop_name);
+        });
+    </script>
+    <h1>Таблица створов</h1>
+    <table id="targetTable">
+        <thead> <th>Номер</th> <th>Название</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+    async function getTarget() {
+            const response = await fetch("/api/target", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const targets = await response.json();
+                const rows = document.querySelector("#targetTable");
+                targets.forEach(target => rows.append(rowTarget(target)));
+            }
+        }
+    function rowTarget(target) {
+
+            const target_temp = document.createElement("tr");
+            target_temp.setAttribute("data-rowid", target.id);
+
+            const target_idTd = document.createElement("td");
+            target_idTd.append(target.id);
+            target_temp.append(target_idTd);
+
+            const target_nameTd = document.createElement("td");
+            target_nameTd.append(target.target_name);
+            target_temp.append(target_nameTd);
+
+            return target_temp;
+        }
+
+    getTarget();
+    </script>
+    <h1>Таблица предприятий и сбросов</h1>
+    <table id="factoryToDropTable">
+        <thead> <th>Номер</th> <th>Номер предприятия</th> <th>Номер сброса</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+    async function getFactoryToDrop() {
+            const response = await fetch("/api/factory_to_drop", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const factory_to_drops = await response.json();
+                const rows = document.querySelector("#factoryToDropTable");
+                factory_to_drops.forEach(factory_to_drop => rows.append(rowFactoryToDrop(factory_to_drop)));
+            }
+        }
+    function rowFactoryToDrop(factory_to_drop) {
+
+            const factory_to_drop_temp = document.createElement("tr");
+            factory_to_drop_temp.setAttribute("data-rowid", factory_to_drop.id);
+
+            const factory_to_drop_idTd = document.createElement("td");
+            factory_to_drop_idTd.append(factory_to_drop.id);
+            factory_to_drop_temp.append(factory_to_drop_idTd);
+
+            const factory_to_drop_factory_idTd = document.createElement("td");
+            factory_to_drop_factory_idTd.append(factory_to_drop.factory_id);
+            factory_to_drop_temp.append(factory_to_drop_factory_idTd);
+
+            const factory_to_drop_drop_idTd = document.createElement("td");
+            factory_to_drop_drop_idTd.append(factory_to_drop.drop_id);
+            factory_to_drop_temp.append(factory_to_drop_drop_idTd);
+
+            return  factory_to_drop_temp;
+        }
+
+    getFactoryToDrop();
+    </script>
+    <h1>Таблица сбросов и створов</h1>
+    <table id="dropToTargetTable">
+        <thead> <th>Номер</th> <th>Номер контрольного створа</th> <th>Номер сброса</th> <th>Дистанция</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+    async function createDropToTarget(drop, target, distanceDropToTarget) {
+        const response = await fetch("/api/drop_to_target", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                        drop_id : parseInt(drop, 10),
+                        target_id : parseInt(target, 10),
+                        distance : parseInt(distanceDropToTarget, 10)
+                })
+            });
+            if (response.ok === true) {
+                const drop_to_target = await response.json();
+                document.querySelector("tbody").append(rowDropToTarget(drop_to_target));
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+    function resetDropToTarget() {
+        document.getElementById("drop").value =
+        document.getElementById("target").value =
+        document.getElementById("distanceDropToTarget").value = "";
+        }
+
+    document.getElementById("saveDropToTargetBtn").addEventListener("click", async () => {
+        const drop_id = document.getElementById("drop").value;
+        const target_id = document.getElementById("target").value;
+        const distance = document.getElementById("distanceDropToTarget").value;
+        await createDropToTarget(drop_id, target_id, distance);
+        resetDropToTarget();
+    });
+    async function getDropToTarget() {
+            const response = await fetch("/api/drop_to_target", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const drop_to_targets = await response.json();
+                const rows = document.querySelector("#dropToTargetTable");
+                drop_to_targets.forEach(drop_to_target => rows.append(rowDropToTarget(drop_to_target)));
+            }
+        }
+    function rowDropToTarget(drop_to_target) {
+
+            const drop_to_target_temp = document.createElement("tr");
+            drop_to_target_temp.setAttribute("data-rowid", drop_to_target.id);
+
+            const drop_to_target_idTd = document.createElement("td");
+            drop_to_target_idTd.append(drop_to_target.id);
+            drop_to_target_temp.append(drop_to_target_idTd);
+
+            const target_idTd = document.createElement("td");
+            target_idTd.append(drop_to_target.target_id);
+            drop_to_target_temp.append(target_idTd);
+
+            const drop_idTd = document.createElement("td");
+            drop_idTd.append(drop_to_target.drop_id);
+            drop_to_target_temp.append(drop_idTd);
+
+            const distanceTd = document.createElement("td");
+            distanceTd.append(drop_to_target.distance);
+            drop_to_target_temp.append(distanceTd);
+
+            return drop_to_target_temp;
+        }
+
+    getDropToTarget();
+
+    async function delete_drop_to_target(search_input3, search_input4) {
+
+        const response = await fetch("/api/drop_to_target", {
+                method: "DELETE",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    value : 1,
+                    target_id : search_input3,
+                    drop_id : search_input4
+                })
+            });
+            if (response.ok === true) {
+                const drop_to_target = await response.json();
+
+            } else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+
+    document.getElementById("deleteDropToTargetBtn").addEventListener("click", async () => {
+        const target_id = document.getElementById("search_input3").value;
+        const drop_id = document.getElementById("search_input4").value;
+        await new Promise(r => setTimeout(r, 50));
+        await delete_drop_to_target(target_id, drop_id);
+        });
+
+    </script>
+    <h1>Таблица веществ</h1>
+    <table id="substanceTable">
+        <thead> <th>Номер</th> <th>Класс опасности</th> <th>ЛВФ</th> <th>КНК</th> <th>Название</th>  <th>Группа</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+    async function getSubstance() {
+            const response = await fetch("/api/substance", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const substancies = await response.json();
+                const rows = document.querySelector("#substanceTable");
+                substancies.forEach(substance => rows.append(rowSubstance(substance)));
+            }
+        }
+    function rowSubstance(substance) {
+
+            const substance_temp = document.createElement("tr");
+            substance_temp.setAttribute("data-rowid", substance.id);
+
+            const substance_idTd = document.createElement("td");
+            substance_idTd.append(substance.id);
+            substance_temp.append(substance_idTd);
+
+            const substance_danger_classTd = document.createElement("td");
+            substance_danger_classTd.append(substance.danger_class);
+            substance_temp.append(substance_danger_classTd);
+
+            const substance_lvfTd = document.createElement("td");
+            substance_lvfTd.append(substance.lvf);
+            substance_temp.append(substance_lvfTd);
+
+            const substance_knkTd = document.createElement("td");
+            substance_knkTd.append(substance.knk);
+            substance_temp.append(substance_knkTd);
+
+            const substance_substance_nameTd = document.createElement("td");
+            substance_substance_nameTd.append(substance.substance_name);
+            substance_temp.append(substance_substance_nameTd);
+
+            const substance_groupTd = document.createElement("td");
+            substance_groupTd.append(substance.group);
+            substance_temp.append(substance_groupTd);
+
+            return substance_temp;
+        }
+
+    getSubstance();
+    </script>
+    <h1>Таблица водопользования к ЛВФ</h1>
+    <table id="waterUseTypeToLvfTable">
+        <thead> <th>Номер</th> <th>Водопользование предприятия</th> <th>ЛВФ</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+    async function getWaterUseTypeToLvf() {
+            const response = await fetch("/api/water_use_type_to_lvf", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const water_use_type_to_lvf_ = await response.json();
+                const rows = document.querySelector("#waterUseTypeToLvfTable");
+                water_use_type_to_lvf_.forEach(water_use_type_to_lvf => rows.append(rowWaterUseTypeToLvf(water_use_type_to_lvf)));
+            }
+        }
+    function rowWaterUseTypeToLvf(water_use_type_to_lvf) {
+
+            const water_use_type_to_lvf_temp = document.createElement("tr");
+            water_use_type_to_lvf_temp.setAttribute("data-rowid", water_use_type_to_lvf.id);
+
+            const water_use_type_to_lvf_idTd = document.createElement("td");
+            water_use_type_to_lvf_idTd.append(water_use_type_to_lvf.id);
+            water_use_type_to_lvf_temp.append(water_use_type_to_lvf_idTd);
+
+            const water_use_type_to_lvf_water_use_typeTd = document.createElement("td");
+            water_use_type_to_lvf_water_use_typeTd.append(water_use_type_to_lvf.water_use_type);
+            water_use_type_to_lvf_temp.append(water_use_type_to_lvf_water_use_typeTd);
+
+            const water_use_type_to_lvf_lvfTd = document.createElement("td");
+            water_use_type_to_lvf_lvfTd.append(water_use_type_to_lvf.lvf);
+            water_use_type_to_lvf_temp.append(water_use_type_to_lvf_lvfTd);
+
+            return water_use_type_to_lvf_temp;
+        }
+
+    getWaterUseTypeToLvf();
+    </script>
+    <h1>Таблица водопользования к классу опасности</h1>
+    <table id="waterUseTypeToDangerClassTable">
+        <thead>  <th>Номер</th> <th>Водопользование предприятия</th> <th>Класс опасности</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+    async function getWaterUseTypeToDangerClass() {
+            const response = await fetch("/api/water_use_type_to_danger_class", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const water_use_type_to_danger_class_ = await response.json();
+                const rows = document.querySelector("#waterUseTypeToDangerClassTable");
+                water_use_type_to_danger_class_.forEach(water_use_type_to_danger_class =>
+                    rows.append(rowWaterUseTypeToDangerClass(water_use_type_to_danger_class)));
+            }
+        }
+    function rowWaterUseTypeToDangerClass(water_use_type_to_danger_class) {
+
+            const water_use_type_to_danger_class_temp = document.createElement("tr");
+            water_use_type_to_danger_class_temp.setAttribute("data-rowid", water_use_type_to_danger_class.id);
+
+            const water_use_type_to_danger_class_idTd = document.createElement("td");
+            water_use_type_to_danger_class_idTd.append(water_use_type_to_danger_class.id);
+            water_use_type_to_danger_class_temp.append(water_use_type_to_danger_class_idTd);
+
+            const water_use_type_to_danger_class_water_use_typeTd = document.createElement("td");
+            water_use_type_to_danger_class_water_use_typeTd.append(water_use_type_to_danger_class.water_use_type);
+            water_use_type_to_danger_class_temp.append(water_use_type_to_danger_class_water_use_typeTd);
+
+            const water_use_type_to_danger_class_danger_classTd = document.createElement("td");
+            water_use_type_to_danger_class_danger_classTd.append(water_use_type_to_danger_class.danger_class);
+            water_use_type_to_danger_class_temp.append(water_use_type_to_danger_class_danger_classTd);
+
+            return water_use_type_to_danger_class_temp;
+        }
+
+    getWaterUseTypeToDangerClass();
+    </script>
+    <h1>Таблица веществ и сбросов</h1>
+    <table id="substanceToDropTable">
+        <thead> <th>Номер</th><th>Номер контрольного створа</th><th>Номер сброса</th> <th>Номер вещества</th> <th>Консцентрация в сбросе</th>
+        <th>Консцентрация в контрольном створе</th> <th>ПДК</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+    async function getSubstanceToDropTable() {
+            const response = await fetch("/api/substance_to_drop", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const substance_to_drops = await response.json();
+                const rows = document.querySelector("#substanceToDropTable");
+                substance_to_drops.forEach(substance_to_drop => rows.append(rowSubstanceToDrop(substance_to_drop)));
+            }
+        }
+    function rowSubstanceToDrop(substance_to_drop) {
+
+            const substance_to_drop_temp = document.createElement("tr");
+            substance_to_drop_temp.setAttribute("data-rowid", substance_to_drop.id);
+
+            const substance_to_drop_idTd = document.createElement("td");
+            substance_to_drop_idTd.append(substance_to_drop.id);
+            substance_to_drop_temp.append(substance_to_drop_idTd);
+
+            const substance_to_drop_target_idTd = document.createElement("td");
+            substance_to_drop_target_idTd.append(substance_to_drop.target_id);
+            substance_to_drop_temp.append(substance_to_drop_target_idTd);
+
+            const substance_to_drop_drop_idTd = document.createElement("td");
+            substance_to_drop_drop_idTd.append(substance_to_drop.drop_id);
+            substance_to_drop_temp.append(substance_to_drop_drop_idTd);
+
+            const substance_to_substance_idTd = document.createElement("td");
+            substance_to_substance_idTd.append(substance_to_drop.substance_id);
+            substance_to_drop_temp.append(substance_to_substance_idTd);
+
+            const substance_to_drop_concentration_in_dropTd = document.createElement("td");
+            substance_to_drop_concentration_in_dropTd.append(substance_to_drop.concentration_in_drop);
+            substance_to_drop_temp.append(substance_to_drop_concentration_in_dropTd);
+
+            const substance_to_drop_concentration_in_targetTd = document.createElement("td");
+            substance_to_drop_concentration_in_targetTd.append(substance_to_drop.concentration_in_target);
+            substance_to_drop_temp.append(substance_to_drop_concentration_in_targetTd);
+
+            const substance_to_drop_pdkTd = document.createElement("td");
+            substance_to_drop_pdkTd.append(substance_to_drop.pdk);
+            substance_to_drop_temp.append(substance_to_drop_pdkTd);
+
+            return substance_to_drop_temp;
+        }
+
+    getSubstanceToDropTable();
+    </script>
+</body>
+</html>
