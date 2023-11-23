@@ -23,33 +23,43 @@ def get_db():
 
 @app.get("/")
 async def main():
-    return FileResponse('./public/index.html')
+    return FileResponse('public/index.html')
+
+
+@app.get("/api/factories")
+def get_factory():
+    return FileResponse("public/factory.html")
+
+
+@app.get("/api/drops")
+def get_factory():
+    return FileResponse("public/drop.html")
+
+
+@app.get("/api/requests")
+def get_factory():
+    return FileResponse("public/requests.html")
 
 
 @app.get("/api/factory")
 def get_factory(db: Session = Depends(get_db)):
-
     return db.query(Factory).all()
 
 
-@app.post("/api/factory")
+@app.post("/api/factories")
 def create_factory(data=Body(), db: Session = Depends(get_db)):
-    factory = Factory(factory_name=data["factory_name"], water_use_type=data["water_use_type"])
-    if db.query(Factory).filter(Factory.factory_name == factory.factory_name).all():
+    if db.query(Factory).filter(Factory.factory_name == data["factory_name"]).all():
         return JSONResponse(status_code=404, content={"message": "Предприятие уже существует"})
+    factory = Factory(factory_name=data["factory_name"],
+                      waterUseType_idWaterUseType=data["water_use_type"],
+                      target_idTarget=data["target_id"])
     db.add(factory)
     db.commit()
     db.refresh(factory)
     return factory
 
 
-@app.get("/delete_factory")
-async def delete(query1: str, db: Session = Depends(get_db)):
-    found_values = db.query(Factory).filter(Factory.factory_name == query1).all()
-    return {"query1": query1, "found_values1": found_values}
-
-
-@app.delete("/api/factory")
+@app.delete("/api/factories")
 def delete_factory(data=Body(), db: Session = Depends(get_db)):
     found_values = db.query(Factory).filter(Factory.factory_name == data["factory_name"]).all()
     if not found_values:
@@ -60,15 +70,16 @@ def delete_factory(data=Body(), db: Session = Depends(get_db)):
     return found_values
 
 
-@app.post("/api/update_factory")
+@app.post("/api/update_factories")
 async def update_factory(data=Body(), db: Session = Depends(get_db)):
-    factory_to_update = db.query(Factory).filter(Factory.id == data["factory_id"]).first()
+    factory_to_update = db.query(Factory).filter(Factory.idFactory == data["factory_id"]).first()
     if factory_to_update is None:
         return {"message": "Фабрика с указанным ID не найдена"}
     factory_to_update.factory_name = data["factory_name"]
-    factory_to_update.water_use_type = data["water_use_type"]
+    factory_to_update.waterUseType_idWaterUseType = data["water_use_type"]
+    factory_to_update.target_idTarget = data["target_id"]
     db.commit()
-    return {"message": "Фабрика успешно обновлена"}
+    return factory_to_update
 
 
 @app.get("/api/drop")
@@ -90,12 +101,6 @@ def create_drop(data=Body(), db: Session = Depends(get_db)):
     return drop
 
 
-@app.get("/delete_drop")
-async def delete(query2: str, db: Session = Depends(get_db)):
-    found_values = db.query(Drop).filter(Drop.drop_name == query2).all()
-    return {"query2": query2, "found_values2": found_values}
-
-
 @app.delete("/api/drop")
 def delete_drop(data=Body(), db: Session = Depends(get_db)):
     found_values = db.query(Drop).filter(Drop.drop_name == data["drop_name"]).all()
@@ -109,7 +114,7 @@ def delete_drop(data=Body(), db: Session = Depends(get_db)):
 
 @app.post("/api/update_drop")
 async def update_factory(data=Body(), db: Session = Depends(get_db)):
-    drop = db.query(Drop).filter(Drop.id == data["drop_id"]).first()
+    drop = db.query(Drop).filter(Drop.idDrop == data["drop_id"]).first()
     if drop is None:
         return JSONResponse(status_code=404, content={"message": "Сброс с указанным ID не найден"})
     drop.drop_name = data["drop_name"]

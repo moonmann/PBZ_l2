@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Title</title>
 </head>
 <body>
-<div style="float: left; width: 400px; height: 600px;" >
+    <ul>
+        <li><a href="/">Назад</a></li>
+    </ul>
+<div  >
                 <h1>Добавление предприятия</h1>
                 <input type="hidden" id="factoryId" />
                 <p>
@@ -17,21 +21,22 @@
                     <input id="waterUseType" />
                 </p>
                 <p>
+                    Номер контрольного створа:<br />
+                    <input id="targetId" />
+                </p>
+                <p>
                     <button id="saveFactoryBtn">Сохранить</button>
                 </p>
             </div>
-<div style="float: left; width: 400px;">
+<div >
             <h1>Удаление предприятия</h1>
-            <form id="search-form1">
-                <label>Название предприятия</label>
-                <div>
-                    <input id="search_input1" type="text" name="quere1" value="">
-                </div>
-                <button type="submit" id="deleteFactoryBtn">Удалить</button>
-            </form>
-            <ul id="found-values1"></ul>
-        </div>
-<div style="float: left; width: 400px;">
+            <p>
+                Название предприятия:<br />
+                <input id="deleteFactoryName" />
+            </p>
+        <button id="deleteFactoryBtn">Удалить</button>
+</div>
+<div >
             <h1>Редактирование предприятия</h1>
             <p>
                 Номер предприятия:<br/>
@@ -46,6 +51,10 @@
                 <input type="text" id="editWaterUseType" />
             </p>
             <p>
+                Номер контрольного створа:<br />
+                <input id="editTargetId" />
+            </p>
+            <p>
                 <button id="editFactoryBtn">Сохранить</button>
             </p>
         </div>
@@ -54,7 +63,135 @@
         <thead> <th>Номер</th> <th>Название предприятия</th> <th>Водопользование предприятия</th><th>Контрольный створ</th></thead>
         <tbody>
         </tbody>
-    </table>
+</table>
+<script>
+        async function createFactory(factoryName, waterUseType, targetId) {
+        const response = await fetch("/api/factories", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    factory_name : factoryName,
+                    water_use_type : waterUseType,
+                    target_id: targetId
+                })
+            });
+            if (response.ok === true) {
+                const factory = await response.json();
+                document.querySelector("tbody").append(rowFactory(factory));
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+        function resetFactory() {
+        document.getElementById("factoryName").value =
+        document.getElementById("targetId").value =
+        document.getElementById("waterUseType").value ="";
+        }
 
+        document.getElementById("saveFactoryBtn").addEventListener("click", async () => {
+        const factory_name = document.getElementById("factoryName").value;
+        const water_use_type = document.getElementById("waterUseType").value;
+        const target_id = document.getElementById("targetId").value;
+        await createFactory(factory_name, water_use_type, target_id);
+        resetFactory();
+        });
+        async function editFactory(factoryId, factoryName, waterUseType, targetId) {
+        const response = await fetch("/api/update_factories", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    factory_id : parseInt(factoryId, 10),
+                    factory_name : factoryName,
+                    water_use_type : waterUseType,
+                    target_id: targetId
+                })
+            });
+            if (response.ok === true) {
+                const factory = await response.json();
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+        function resetEditFactory() {
+        document.getElementById("editFactoryId").value =
+        document.getElementById("editFactoryName").value =
+        document.getElementById("editTargetId").value =
+        document.getElementById("editWaterUseType").value = "";
+        }
+
+        document.getElementById("editFactoryBtn").addEventListener("click", async () => {
+        const factory_id = document.getElementById("editFactoryId").value;
+        const factory_name = document.getElementById("editFactoryName").value;
+        const water_use_type = document.getElementById("editWaterUseType").value;
+        const target_id = document.getElementById("editTargetId").value;
+        await editFactory(factory_id, factory_name, water_use_type, target_id);
+        resetEditFactory();
+        });
+
+        async function getFactories() {
+            const response = await fetch("/api/factory", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const factories = await response.json();
+                const rows = document.querySelector("#factoryTable");
+                factories.forEach(factory => rows.append(rowFactory(factory)));
+            }
+        }
+
+        function rowFactory(factory) {
+
+            const factory_temp = document.createElement("tr");
+            factory_temp.setAttribute("data-rowid", factory.id);
+
+            const factory_idTd = document.createElement("td");
+            factory_idTd.append(factory.idFactory);
+            factory_temp.append(factory_idTd);
+
+            const factory_nameTd = document.createElement("td");
+            factory_nameTd.append(factory.factory_name);
+            factory_temp.append(factory_nameTd);
+
+            const water_use_typeTd = document.createElement("td");
+            water_use_typeTd.append(factory.waterUseType_idWaterUseType);
+            factory_temp.append(water_use_typeTd);
+
+            const target_idTd = document.createElement("td");
+            target_idTd.append(factory.target_idTarget);
+            factory_temp.append(target_idTd);
+
+            return factory_temp;
+        }
+
+        getFactories();
+        async function delete_factory(deleteFactoryName) {
+
+        const response = await fetch("/api/factories", {
+                method: "DELETE",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    factory_name : deleteFactoryName,
+                })
+            });
+            if (response.ok === true) {
+                const factory = await response.json();
+
+            } else {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+
+        document.getElementById("deleteFactoryBtn").addEventListener("click", async () => {
+        const factory_name = document.getElementById("deleteFactoryName").value;
+        await delete_factory(factory_name);
+        document.getElementById("deleteFactoryName").value = "";
+        });
+    </script>
 </body>
 </html>

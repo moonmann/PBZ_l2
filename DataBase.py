@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, create_engine, CheckConstraint, ForeignKey
+from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"

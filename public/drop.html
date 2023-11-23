@@ -33,7 +33,7 @@
     </script>
 </head>
 <body>
-<div style="float: left; width: 400px; height: 600px;">
+<div>
                 <h1>Добавление выпуска</h1>
                 <input type="hidden" id="dropId" />
                 <p>
@@ -72,7 +72,7 @@
                     <button id="saveDropBtn">Сохранить</button>
                 </p>
             </div>
-<div style="float: left; width: 400px;">
+<div>
             <h1>Удаление сброса</h1>
             <form id="search-form2">
                 <label>Название сброса</label>
@@ -83,7 +83,7 @@
             </form>
             <ul id="found-values2"></ul>
         </div>
-<div style="float: left; width: 400px;">
+<div>
             <h1>Редактирование выпуска</h1>
             <p>
                 Номер сброса:<br/>
@@ -132,7 +132,6 @@
         <tbody>
         </tbody>
     </table>
-
 <script>
         async function createDrop(dropName, Diameter, minWaterSpeed, waterConsumption, angleAboutWater,
                                distanceToSurface, distanceToCoast, date_) {
@@ -261,7 +260,7 @@
             drop_temp.setAttribute("data-rowid", drop.id);
 
             const drop_idTd = document.createElement("td");
-            drop_idTd.append(drop.id);
+            drop_idTd.append(drop.idDrop);
             drop_temp.append(drop_idTd);
 
             const drop_nameTd = document.createElement("td");
