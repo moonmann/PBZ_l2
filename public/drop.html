@@ -2,37 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script>
-        $(document).ready(function() {
-            $("#search-form2").on("submit", function(event) {
-                event.preventDefault();
-                $.ajax({
-                    url: "/delete_drop",
-                    type: "GET",
-                    data: {query2: $("#search_input2").val()},
-                    success: function(result) {
-                        $("#found-values2").empty();
-                        if (result.found_values2.length > 0) {
-                            $.each(result.found_values2, function(i, value) {
-                                $("#found-values").append("<li>" + value.id + value.drop_name  + "\t" +  value.diameter +
-                                    value.min_water_speed  + "\t" +  value.water_consumption +
-                                    value.angle_about_water  + "\t" +  value.distance_to_surface +
-                                    value.distance_to_coast  + "\t" +  value.date +"</li>");
-                            });
-                        } else {
-                            $("#found-values2").append("<li>Ничего не найдено</li>");
-                        }
-                    },
-                    error: function() {
-                        $("#found-values2").empty().append("<li>Ошибка при выполнении запроса</li>");
-                    }
-                });
-            });
-        });
-    </script>
+    <title>Drop</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
+<ul>
+        <li><a href="/">Назад</a></li>
+    </ul>
 <div>
                 <h1>Добавление выпуска</h1>
                 <input type="hidden" id="dropId" />
@@ -54,11 +30,11 @@
                 </p>
                 <p>
                     Угол падения воды:<br/>
-                    <input id="angleAboutWater" type="number" />
+                    <input id="angelAboutWater" type="number" />
                 </p>
                 <p>
                     Дистанция до поверхности:<br />
-                    <input id="distanceToSurface" type="number" />
+                    <input id="distanceToWater" type="number" />
                 </p>
                 <p>
                     Дистанция до берега:<br/>
@@ -74,15 +50,13 @@
             </div>
 <div>
             <h1>Удаление сброса</h1>
-            <form id="search-form2">
-                <label>Название сброса</label>
-                <div>
-                    <input id="search_input2" type="text" name="quere2" value="">
-                </div>
-                <button type="submit" id="deleteDropBtn">Удалить</button>
-            </form>
-            <ul id="found-values2"></ul>
-        </div>
+                <p>
+                    Название сброса:<br/>
+                    <input id="deleteDropName" />
+                </p>
+            <button id="deleteDropBtn">Удалить</button>
+
+</div>
 <div>
             <h1>Редактирование выпуска</h1>
             <p>
@@ -107,11 +81,11 @@
             </p>
             <p>
                 Угол падения воды:<br/>
-                <input id="editDropAngleAboutWater" type="number" />
+                <input id="editDropAngelAboutWater" type="number" />
             </p>
             <p>
                 Дистанция до поверхности:<br />
-                <input id="editDropDistanceToSurface" type="number" />
+                <input id="editDropDistanceToWater" type="number" />
             </p>
             <p>
                 Дистанция до берега:<br/>
@@ -133,9 +107,9 @@
         </tbody>
     </table>
 <script>
-        async function createDrop(dropName, Diameter, minWaterSpeed, waterConsumption, angleAboutWater,
-                               distanceToSurface, distanceToCoast, date_) {
-        const response = await fetch("/api/drop", {
+        async function createDrop(dropName, Diameter, minWaterSpeed, waterConsumption, angelAboutWater,
+                               distanceToWater, distanceToCoast, date_) {
+        const response = await fetch("/api/drops", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -143,8 +117,8 @@
                         diameter : parseInt(Diameter, 10),
                         min_water_speed : parseInt(minWaterSpeed, 10),
                         water_consumption : parseInt(waterConsumption, 10),
-                        angle_about_water : parseInt(angleAboutWater, 10),
-                        distance_to_surface : parseInt(distanceToSurface, 10),
+                        angel_about_water : parseInt(angelAboutWater, 10),
+                        distance_to_water : parseInt(distanceToWater, 10),
                         distance_to_coast : parseInt(distanceToCoast, 10),
                         date : date_
                 })
@@ -163,8 +137,8 @@
         document.getElementById("Diameter").value =
         document.getElementById("minWaterSpeed").value =
         document.getElementById("waterConsumption").value =
-        document.getElementById("angleAboutWater").value =
-        document.getElementById("distanceToSurface").value =
+        document.getElementById("angelAboutWater").value =
+        document.getElementById("distanceToWater").value =
         document.getElementById("distanceToCoast").value =
         document.getElementById("date_").value = "";
         }
@@ -174,18 +148,18 @@
         const diameter = document.getElementById("Diameter").value;
         const min_water_speed = document.getElementById("minWaterSpeed").value;
         const water_consumption = document.getElementById("waterConsumption").value;
-        const angle_about_water = document.getElementById("angleAboutWater").value;
-        const distance_to_surface = document.getElementById("distanceToSurface").value;
+        const angel_about_water = document.getElementById("angelAboutWater").value;
+        const distance_to_water = document.getElementById("distanceToWater").value;
         const distance_to_coast = document.getElementById("distanceToCoast").value;
         const date = document.getElementById("date_").value;
         await createDrop(drop_name, diameter, min_water_speed, water_consumption,
-                            angle_about_water, distance_to_surface, distance_to_coast, date);
+                            angel_about_water, distance_to_water, distance_to_coast, date);
         resetDrop();
     });
 
-        async function editDrop(dropId, dropName, Diameter, minWaterSpeed, waterConsumption, angleAboutWater,
-                               distanceToSurface, distanceToCoast, date_) {
-        const response = await fetch("/api/update_drop", {
+        async function editDrop(dropId, dropName, Diameter, minWaterSpeed, waterConsumption, angelAboutWater,
+                               distanceToWater, distanceToCoast, date_) {
+        const response = await fetch("/api/update_drops", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -194,8 +168,8 @@
                         diameter : parseInt(Diameter, 10),
                         min_water_speed : parseInt(minWaterSpeed, 10),
                         water_consumption : parseInt(waterConsumption, 10),
-                        angle_about_water : parseInt(angleAboutWater, 10),
-                        distance_to_surface : parseInt(distanceToSurface, 10),
+                        angel_about_water : parseInt(angelAboutWater, 10),
+                        distance_to_water : parseInt(distanceToWater, 10),
                         distance_to_coast : parseInt(distanceToCoast, 10),
                         date : date_
                 })
@@ -208,6 +182,17 @@
                 console.log(error.message);
             }
         }
+        function resetEditDrop() {
+            document.getElementById("editDropId").value =
+            document.getElementById("editDropName").value =
+            document.getElementById("editDropDiameter").value =
+            document.getElementById("editDropMinWaterSpeed").value =
+            document.getElementById("editDropWaterConsumption").value =
+            document.getElementById("editDropAngelAboutWater").value =
+            document.getElementById("editDropDistanceToWater").value =
+            document.getElementById("editDropDistanceToCoast").value =
+            document.getElementById("editDropDate").value = "";
+        }
 
         document.getElementById("editDropBtn").addEventListener("click", async () => {
         const drop_name = document.getElementById("editDropName").value;
@@ -215,12 +200,12 @@
         const diameter = document.getElementById("editDropDiameter").value;
         const min_water_speed = document.getElementById("editDropMinWaterSpeed").value;
         const water_consumption = document.getElementById("editDropWaterConsumption").value;
-        const angle_about_water = document.getElementById("editDropAngleAboutWater").value;
-        const distance_to_surface = document.getElementById("editDropDistanceToSurface").value;
+        const angel_about_water = document.getElementById("editDropAngelAboutWater").value;
+        const distance_to_water = document.getElementById("editDropDistanceToWater").value;
         const distance_to_coast = document.getElementById("editDropDistanceToCoast").value;
         const date = document.getElementById("editDropDate").value;
         await editDrop(drop_id, drop_name, diameter, min_water_speed, water_consumption,
-                            angle_about_water, distance_to_surface, distance_to_coast, date);
+                            angel_about_water, distance_to_water, distance_to_coast, date);
     });
         async function getDrops() {
             const response = await fetch("/api/drop", {
@@ -235,14 +220,14 @@
         }
 
         getDrops();
-        async function delete_drop(search_input2) {
+        async function delete_drop(deleteDropName) {
 
-            const response = await fetch("/api/drop", {
+            const response = await fetch("/api/drops", {
                     method: "DELETE",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
                     body: JSON.stringify({
                         value : 1,
-                        drop_name : search_input2,
+                        drop_name : deleteDropName,
                     })
                 });
                 if (response.ok === true) {
@@ -257,7 +242,7 @@
         function rowDrop(drop) {
 
             const drop_temp = document.createElement("tr");
-            drop_temp.setAttribute("data-rowid", drop.id);
+            drop_temp.setAttribute("data-rowid", drop.idDrop);
 
             const drop_idTd = document.createElement("td");
             drop_idTd.append(drop.idDrop);
@@ -280,13 +265,13 @@
             drop_water_consumptionTd.append(drop.water_consumption);
             drop_temp.append(drop_water_consumptionTd);
 
-            const drop_angle_about_waterTd = document.createElement("td");
-            drop_angle_about_waterTd.append(drop.angle_about_water);
-            drop_temp.append(drop_angle_about_waterTd);
+            const drop_angel_about_waterTd = document.createElement("td");
+            drop_angel_about_waterTd.append(drop.angel_about_water);
+            drop_temp.append(drop_angel_about_waterTd);
 
-            const drop_distance_to_surfaceTd = document.createElement("td");
-            drop_distance_to_surfaceTd.append(drop.distance_to_surface);
-            drop_temp.append(drop_distance_to_surfaceTd);
+            const drop_distance_to_waterTd = document.createElement("td");
+            drop_distance_to_waterTd.append(drop.distance_to_water);
+            drop_temp.append(drop_distance_to_waterTd);
 
             const drop_distance_to_coastTd = document.createElement("td");
             drop_distance_to_coastTd.append(drop.distance_to_coast);
@@ -300,8 +285,7 @@
         }
 
         document.getElementById("deleteDropBtn").addEventListener("click", async () => {
-        const drop_name = document.getElementById("search_input2").value;
-        await new Promise(r => setTimeout(r, 50));
+        const drop_name = document.getElementById("deleteDropName").value;
         await delete_drop(drop_name);
         });
     </script>

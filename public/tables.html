@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Tables</title>
+</head>
+<body>
+<ul>
+        <li><a href="/">Назад</a></li>
+    </ul>
+
+<h1>Таблица створов</h1>
+<table id="targetTable">
+        <thead> <th>Номер</th> <th>Название</th> <th>Номер сброса</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+<script>
+    async function getTarget() {
+            const response = await fetch("/api/target", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const targets = await response.json();
+                const rows = document.querySelector("#targetTable");
+                targets.forEach(target => rows.append(rowTarget(target)));
+            }
+        }
+    function rowTarget(target) {
+
+            const target_temp = document.createElement("tr");
+            target_temp.setAttribute("data-rowid", target.idTarget);
+
+            const target_idTd = document.createElement("td");
+            target_idTd.append(target.idTarget);
+            target_temp.append(target_idTd);
+
+            const target_nameTd = document.createElement("td");
+            target_nameTd.append(target.target_name);
+            target_temp.append(target_nameTd);
+
+            const target_dropIdTd = document.createElement("td");
+            target_dropIdTd.append(target.drop_idDrop);
+            target_temp.append(target_dropIdTd);
+
+            return target_temp;
+        }
+
+    getTarget();
+    </script>
+
+<h1>Таблица веществ</h1>
+<table id="substanceTable">
+        <thead> <th>Номер</th> <th>Класс опасности</th> <th>ЛВФ</th> <th>Название</th>  <th>Группа</th> </thead>
+        <tbody>
+        </tbody>
+    </table>
+<script>
+    async function getSubstance() {
+            const response = await fetch("/api/substance", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const substancies = await response.json();
+                const rows = document.querySelector("#substanceTable");
+                substancies.forEach(substance => rows.append(rowSubstance(substance)));
+            }
+        }
+    function rowSubstance(substance) {
+
+            const substance_temp = document.createElement("tr");
+            substance_temp.setAttribute("data-rowid", substance.idSubstance);
+
+            const substance_idTd = document.createElement("td");
+            substance_idTd.append(substance.idSubstance);
+            substance_temp.append(substance_idTd);
+
+            const substance_danger_classTd = document.createElement("td");
+            substance_danger_classTd.append(substance.danger_class);
+            substance_temp.append(substance_danger_classTd);
+
+            const substance_lvfTd = document.createElement("td");
+            substance_lvfTd.append(substance.lvf);
+            substance_temp.append(substance_lvfTd);
+
+            const substance_substance_nameTd = document.createElement("td");
+            substance_substance_nameTd.append(substance.substance_name);
+            substance_temp.append(substance_substance_nameTd);
+
+            const substance_groupTd = document.createElement("td");
+            substance_groupTd.append(substance.group);
+            substance_temp.append(substance_groupTd);
+
+            return substance_temp;
+        }
+
+    getSubstance();
+    </script>
+
+<h1>Таблица водопользования</h1>
+<table id="waterUseTypeTable">
+        <thead> <th>Номер</th> <th>Водопользование</th>  </thead>
+        <tbody>
+        </tbody>
+    </table>
+<script>
+    async function getWaterUseType() {
+            const response = await fetch("/api/water_use_type", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const water_use_types = await response.json();
+                const rows = document.querySelector("#waterUseTypeTable");
+                water_use_types.forEach(water_use_type => rows.append(rowWaterUseType(water_use_type)));
+            }
+        }
+    function rowWaterUseType(water_use_type) {
+
+            const water_use_type_temp = document.createElement("tr");
+            water_use_type_temp.setAttribute("data-rowid", water_use_type.idWaterUseType);
+
+            const water_use_type_idTd = document.createElement("td");
+            water_use_type_idTd.append(water_use_type.idWaterUseType);
+            water_use_type_temp.append(water_use_type_idTd);
+
+            const water_use_typeTd = document.createElement("td");
+            water_use_typeTd.append(water_use_type.water_use_type);
+            water_use_type_temp.append(water_use_typeTd);
+
+            return water_use_type_temp;
+        }
+
+    getWaterUseType();
+    </script>
+
+<h1>Таблица водопользования к веществам</h1>
+<table id="waterUseTypeToSubstanceTable">
+        <thead> <th>Номер</th> <th>Водопользование</th>  </thead>
+        <tbody>
+        </tbody>
+    </table>
+<script>
+    async function getWaterUseTypeToSubstance() {
+            const response = await fetch("/api/water_use_type_to_substance", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const water_use_type_to_substancies = await response.json();
+                const rows = document.querySelector("#waterUseTypeToSubstanceTable");
+                water_use_type_to_substancies.forEach(water_use_type_to_substance =>
+                    rows.append(rowWaterUseTypeToSubstance(water_use_type_to_substance)));
+            }
+        }
+    function rowWaterUseTypeToSubstance(water_use_type_to_substance) {
+
+            const water_use_type_to_substance_temp = document.createElement("tr");
+            water_use_type_to_substance_temp.setAttribute("data-rowid", water_use_type_to_substance.idWaterUseTypeToSubstance);
+
+            const water_use_type_to_substance_idTd = document.createElement("td");
+            water_use_type_to_substance_idTd.append(water_use_type_to_substance.idWaterUseTypeToSubstance);
+            water_use_type_to_substance_temp.append(water_use_type_to_substance_idTd);
+
+            const water_use_type_to_substance_water_use_type_idTd = document.createElement("td");
+            water_use_type_to_substance_water_use_type_idTd.append(water_use_type_to_substance.waterUseType_idWaterUseType);
+            water_use_type_to_substance_temp.append(water_use_type_to_substance_water_use_type_idTd);
+
+            const water_use_type_to_substance_substance_idTd = document.createElement("td");
+            water_use_type_to_substance_substance_idTd.append(water_use_type_to_substance.substance_idSubstance);
+            water_use_type_to_substance_temp.append(water_use_type_to_substance_substance_idTd);
+
+            return water_use_type_to_substance_temp;
+        }
+
+    getWaterUseTypeToSubstance();
+    </script>
+
+<h1>Таблица веществ и сбросов</h1>
+<table id="substanceToDropTable">
+        <thead> <th>Номер</th><th>Номер контрольного створа</th><th>Номер сброса</th> <th>Номер вещества</th> <th>Консцентрация в сбросе</th>
+        <th>Консцентрация в контрольном створе</th> <th>ПДК</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+<script>
+    async function getSubstanceToDropTable() {
+            const response = await fetch("/api/substance_to_drop", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const substance_to_drops = await response.json();
+                const rows = document.querySelector("#substanceToDropTable");
+                substance_to_drops.forEach(substance_to_drop => rows.append(rowSubstanceToDrop(substance_to_drop)));
+            }
+        }
+    function rowSubstanceToDrop(substance_to_drop) {
+
+            const substance_to_drop_temp = document.createElement("tr");
+            substance_to_drop_temp.setAttribute("data-rowid", substance_to_drop.idSubstanceToDrop);
+
+            const substance_to_drop_idTd = document.createElement("td");
+            substance_to_drop_idTd.append(substance_to_drop.idSubstanceToDrop);
+            substance_to_drop_temp.append(substance_to_drop_idTd);
+
+            const substance_to_drop_drop_idTd = document.createElement("td");
+            substance_to_drop_drop_idTd.append(substance_to_drop.drop_idDrop);
+            substance_to_drop_temp.append(substance_to_drop_drop_idTd);
+
+            const substance_to_substance_idTd = document.createElement("td");
+            substance_to_substance_idTd.append(substance_to_drop.substance_idSubstance);
+            substance_to_drop_temp.append(substance_to_substance_idTd);
+
+            const substance_to_drop_concentration_in_dropTd = document.createElement("td");
+            substance_to_drop_concentration_in_dropTd.append(substance_to_drop.concentration_in_drop);
+            substance_to_drop_temp.append(substance_to_drop_concentration_in_dropTd);
+
+            const substance_to_drop_concentration_in_targetTd = document.createElement("td");
+            substance_to_drop_concentration_in_targetTd.append(substance_to_drop.concentration_in_target);
+            substance_to_drop_temp.append(substance_to_drop_concentration_in_targetTd);
+
+            const substance_to_drop_pdkTd = document.createElement("td");
+            substance_to_drop_pdkTd.append(substance_to_drop.pdk);
+            substance_to_drop_temp.append(substance_to_drop_pdkTd);
+
+            const substance_to_drop_knkTd = document.createElement("td");
+            substance_to_drop_knkTd.append(substance_to_drop.knk);
+            substance_to_drop_temp.append(substance_to_drop_knkTd);
+
+            return substance_to_drop_temp;
+        }
+
+    getSubstanceToDropTable();
+    </script>
+
+</body>
+</html>

@@ -14,7 +14,7 @@ class Drop(Base):
     drop_name = Column(String(100))
     diameter = Column(Integer)
     min_water_speed = Column(Integer)
-    water_consuption = Column(Integer)
+    water_consumption = Column(Integer)
     angel_about_water = Column(Integer)
     distance_to_water = Column(Integer)
     distance_to_coast = Column(Integer)
@@ -50,11 +50,9 @@ class Factory(Base):
 
 class Substance(Base):
     __tablename__ = 'Substance'
-
     idSubstance = Column(Integer, primary_key=True)
     danger_class = Column(Integer)
     lvf = Column(Integer)
-
     substance_name = Column(String(100))
     group = Column(Integer)
 

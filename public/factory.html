@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <title>Title</title>
+    <title>Factory</title>
 </head>
 <body>
-    <ul>
+<ul>
         <li><a href="/">Назад</a></li>
     </ul>
 <div  >
@@ -147,7 +147,7 @@
         function rowFactory(factory) {
 
             const factory_temp = document.createElement("tr");
-            factory_temp.setAttribute("data-rowid", factory.id);
+            factory_temp.setAttribute("data-rowid", factory.idFactory);
 
             const factory_idTd = document.createElement("td");
             factory_idTd.append(factory.idFactory);

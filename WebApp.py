@@ -26,6 +26,7 @@ async def main():
     return FileResponse('public/index.html')
 
 
+# region Files
 @app.get("/api/factories")
 def get_factory():
     return FileResponse("public/factory.html")
@@ -41,6 +42,15 @@ def get_factory():
     return FileResponse("public/requests.html")
 
 
+@app.get("/api/tables")
+def get_factory():
+    return FileResponse("public/tables.html")
+
+
+# endregion
+
+
+# region Factory
 @app.get("/api/factory")
 def get_factory(db: Session = Depends(get_db)):
     return db.query(Factory).all()
@@ -82,16 +92,20 @@ async def update_factory(data=Body(), db: Session = Depends(get_db)):
     return factory_to_update
 
 
+# endregion
+
+
+# region Drop
 @app.get("/api/drop")
 def get_drop(db: Session = Depends(get_db)):
     return db.query(Drop).all()
 
 
-@app.post("/api/drop")
+@app.post("/api/drops")
 def create_drop(data=Body(), db: Session = Depends(get_db)):
     drop = Drop(drop_name=data["drop_name"], diameter=data["diameter"],
                 min_water_speed=data["min_water_speed"], water_consumption=data["water_consumption"],
-                angle_about_water=data["angle_about_water"], distance_to_surface=data["distance_to_surface"],
+                angel_about_water=data["angel_about_water"], distance_to_water=data["distance_to_water"],
                 distance_to_coast=data["distance_to_coast"], date=data["date"])
     if db.query(Drop).filter(Drop.drop_name == drop.drop_name).all():
         return JSONResponse(status_code=404, content={"message": "Выпуск уже существует"})
@@ -101,7 +115,7 @@ def create_drop(data=Body(), db: Session = Depends(get_db)):
     return drop
 
 
-@app.delete("/api/drop")
+@app.delete("/api/drops")
 def delete_drop(data=Body(), db: Session = Depends(get_db)):
     found_values = db.query(Drop).filter(Drop.drop_name == data["drop_name"]).all()
     if not found_values:
@@ -112,7 +126,7 @@ def delete_drop(data=Body(), db: Session = Depends(get_db)):
     return found_values
 
 
-@app.post("/api/update_drop")
+@app.post("/api/update_drops")
 async def update_factory(data=Body(), db: Session = Depends(get_db)):
     drop = db.query(Drop).filter(Drop.idDrop == data["drop_id"]).first()
     if drop is None:
@@ -121,74 +135,45 @@ async def update_factory(data=Body(), db: Session = Depends(get_db)):
     drop.diameter = data["diameter"]
     drop.min_water_speed = data["min_water_speed"]
     drop.water_consumption = data["water_consumption"]
-    drop.angle_about_water = data["angle_about_water"]
-    drop.distance_to_surface = data["distance_to_surface"]
+    drop.angel_about_water = data["angel_about_water"]
+    drop.distance_to_water = data["distance_to_water"]
     drop.distance_to_coast = data["distance_to_coast"]
     drop.date = data["date"]
     db.commit()
     return {"message": "Сброс успешно обновлен"}
 
 
+# endregion
+
+
+# region Requests
+
+# endregion
+
+
+# region Tables
 @app.get("/api/target")
-def get_target(db: Session = Depends(get_db)):
+def get_drop(db: Session = Depends(get_db)):
     return db.query(Target).all()
 
 
-@app.get("/api/factory_to_drop")
-def get_factory_to_drop(db: Session = Depends(get_db)):
-    return db.query(FactoryToDrop).all()
-
-
-@app.get("/api/drop_to_target")
-def get_drop_to_target(db: Session = Depends(get_db)):
-    return db.query(DropToTarget).all()
-
-
-@app.post("/api/drop_to_target")
-def create_drop_to_target(data=Body(), db: Session = Depends(get_db)):
-    drop_to_target = DropToTarget(target_id=data["target_id"], drop_id=data["drop_id"], distance=data["distance"])
-    if db.query(DropToTarget).filter(DropToTarget.drop_id == drop_to_target.drop_id).all():
-        return JSONResponse(status_code=404, content={"message": "Выпуск уже имеет створ"})
-    db.add(drop_to_target)
-    db.commit()
-    db.refresh(drop_to_target)
-    return drop_to_target
-
-
-@app.get("/delete_drop_to_target")
-async def delete(query3: int, query4: int, db: Session = Depends(get_db)):
-    found_values = db.query(DropToTarget).filter(
-        and_(DropToTarget.drop_id == query4, DropToTarget.target_id == query3)).all()
-    return {"query3": query3, "query4": query4, "found_values3": found_values}
-
-
-@app.delete("/api/drop_to_target")
-def delete_drop_to_target(data=Body(), db: Session = Depends(get_db)):
-    found_values = db.query(DropToTarget).filter(DropToTarget.drop_id == data["drop_id"],
-                                                 DropToTarget.target_id == data["target_id"]).all()
-    if not found_values:
-        return JSONResponse(status_code=404, content={"message": "Дистанция не найдена"})
-    for i in found_values:
-        db.delete(i)
-    db.commit()
-    return found_values
-
-
 @app.get("/api/substance")
-def get_substance(db: Session = Depends(get_db)):
+def get_drop(db: Session = Depends(get_db)):
     return db.query(Substance).all()
 
 
-@app.get("/api/water_use_type_to_danger_class")
-def get_water_use_type_to_danger_class(db: Session = Depends(get_db)):
-    return db.query(WaterUseTypeToDangerClass).all()
+@app.get("/api/water_use_type")
+def get_drop(db: Session = Depends(get_db)):
+    return db.query(WaterUseType).all()
 
 
-@app.get("/api/water_use_type_to_lvf")
-def get_water_use_type_to_lvf(db: Session = Depends(get_db)):
-    return db.query(WaterUseTypeToLvf).all()
+@app.get("/api/water_use_type_to_substance")
+def get_drop(db: Session = Depends(get_db)):
+    return db.query(WaterUseTypeToSubstance).all()
 
 
 @app.get("/api/substance_to_drop")
-def get_substance_to_drop(db: Session = Depends(get_db)):
+def get_drop(db: Session = Depends(get_db)):
     return db.query(SubstanceToDrop).all()
+
+# endregion
