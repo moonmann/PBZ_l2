@@ -2,8 +2,8 @@ from fastapi import FastAPI, Response, Query, Body, Depends, Request, Form
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from sqlalchemy import text
 import json
+from dateParser import parse_date
 from DataBase import *
 
 """uvicorn WebApp:app --reload  """
@@ -61,6 +61,10 @@ def get_factory(db: Session = Depends(get_db)):
 def create_factory(data=Body(), db: Session = Depends(get_db)):
     if db.query(Factory).filter(Factory.factory_name == data["factory_name"]).all():
         return JSONResponse(status_code=404, content={"message": "Предприятие уже существует"})
+    if not db.query(Target).filter(Target.idTarget == data["target_id"]).all():
+        return JSONResponse(status_code=404, content={"message": "Створа не существует"})
+    if not db.query(WaterUseType).filter(WaterUseType.water_use_type == data["water_use_type"]).all():
+        return JSONResponse(status_code=404, content={"message": "Типа водопользования не существует"})
     factory = Factory(factory_name=data["factory_name"],
                       waterUseType_idWaterUseType=data["water_use_type"],
                       target_idTarget=data["target_id"])
@@ -85,7 +89,11 @@ def delete_factory(data=Body(), db: Session = Depends(get_db)):
 async def update_factory(data=Body(), db: Session = Depends(get_db)):
     factory_to_update = db.query(Factory).filter(Factory.idFactory == data["factory_id"]).first()
     if factory_to_update is None:
-        return {"message": "Фабрика с указанным ID не найдена"}
+        return {"message": "Предприятие с указанным ID не найдена"}
+    if not db.query(Target).filter(Target.idTarget == data["target_id"]).all():
+        return JSONResponse(status_code=404, content={"message": "Створа не существует"})
+    if not db.query(WaterUseType).filter(WaterUseType.water_use_type == data["water_use_type"]).all():
+        return JSONResponse(status_code=404, content={"message": "Типа водопользования не существует"})
     factory_to_update.factory_name = data["factory_name"]
     factory_to_update.waterUseType_idWaterUseType = data["water_use_type"]
     factory_to_update.target_idTarget = data["target_id"]
@@ -108,6 +116,8 @@ def create_drop(data=Body(), db: Session = Depends(get_db)):
                 min_water_speed=data["min_water_speed"], water_consumption=data["water_consumption"],
                 angel_about_water=data["angel_about_water"], distance_to_water=data["distance_to_water"],
                 distance_to_coast=data["distance_to_coast"], date=data["date"])
+    if not parse_date(data["date"]):
+        return JSONResponse(status_code=404, content={"message": "Неправильный ввод даты"})
     if db.query(Drop).filter(Drop.drop_name == drop.drop_name).all():
         return JSONResponse(status_code=404, content={"message": "Выпуск уже существует"})
     db.add(drop)
@@ -121,8 +131,12 @@ def delete_drop(data=Body(), db: Session = Depends(get_db)):
     found_values = db.query(Drop).filter(Drop.drop_name == data["drop_name"]).all()
     if not found_values:
         return JSONResponse(status_code=404, content={"message": "Сброс не найден"})
+    delete_sub = db.query(SubstanceToDrop).filter(SubstanceToDrop.drop_idDrop == found_values[0].idDrop).all()
     for i in found_values:
         db.delete(i)
+    if delete_sub:
+        for i in delete_sub:
+            db.delete(i)
     db.commit()
     return found_values
 
@@ -132,6 +146,10 @@ async def update_factory(data=Body(), db: Session = Depends(get_db)):
     drop = db.query(Drop).filter(Drop.idDrop == data["drop_id"]).first()
     if drop is None:
         return JSONResponse(status_code=404, content={"message": "Сброс с указанным ID не найден"})
+    if db.query(Drop).filter(Drop.drop_name == data["drop_name"]).all():
+        return JSONResponse(status_code=404, content={"message": "Выпуск уже существует"})
+    if not parse_date(data["date"]):
+        return JSONResponse(status_code=404, content={"message": "Неправильный ввод даты"})
     drop.drop_name = data["drop_name"]
     drop.diameter = data["diameter"]
     drop.min_water_speed = data["min_water_speed"]
@@ -150,10 +168,11 @@ async def update_factory(data=Body(), db: Session = Depends(get_db)):
 # region Requests
 @app.get("/api/requests_subs")
 def get_drop(db: Session = Depends(get_db)):
-
     time_table = db.query(SubstanceToDrop.substance_idSubstance,
                           SubstanceToDrop.drop_idDrop,
                           SubstanceToDrop.concentration_in_drop).all()
+    if not time_table:
+        return JSONResponse(status_code=404, content={"message": "Ничего не найдено"})
     json_result = json.dumps([
         {
             'ID вещества': row[0],
@@ -170,6 +189,9 @@ def get_drop(db: Session = Depends(get_db)):
     time_table = db.query(Target.idTarget, SubstanceToDrop.drop_idDrop, SubstanceToDrop.pdk, SubstanceToDrop.knk,
                           SubstanceToDrop.concentration_in_target).join(Target,
                                                                         Target.drop_idDrop == SubstanceToDrop.drop_idDrop).all()
+    if not time_table:
+        return JSONResponse(status_code=404, content={"message": "Ничего не найдено"})
+    print(time_table)
     json_result = json.dumps([
         {
             'ID створа': row[0],
@@ -185,7 +207,13 @@ def get_drop(db: Session = Depends(get_db)):
 
 @app.post("/api/requests_drop")
 def get_drop(data=Body(), db: Session = Depends(get_db)):
-    time_table = db.query( Factory.idFactory, Drop.idDrop, Drop.date)\
+    if not db.query(Factory).filter(Factory.idFactory == data["factory_id"]).all():
+        return JSONResponse(status_code=404, content={"message": "Предприятия не существует"})
+    if not parse_date(data["date"]):
+        return JSONResponse(status_code=404, content={"message": "Неправильный ввод даты"})
+    if not db.query(Drop).filter(Drop.date == data["date"]).all():
+        return JSONResponse(status_code=404, content={"message": "Сброса с такой датой не существует"})
+    time_table = db.query(Factory.idFactory, Drop.idDrop, Drop.date)\
         .join(Target, Target.drop_idDrop == Drop.idDrop) \
         .join(Factory, Factory.target_idTarget == Target.idTarget) \
         .filter(Factory.idFactory == data["factory_id"], Drop.date == data["date"]) \

@@ -180,6 +180,7 @@
             });
             if (response.ok === true) {
                 const factory = await response.json();
+                document.getElementById("deleteFactoryName").value = "";
 
             } else {
                 const error = await response.json();

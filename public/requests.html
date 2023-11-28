@@ -63,47 +63,40 @@
 
     <script>
         async function getSubs() {
-            try {
                 const response = await fetch("/api/requests_subs", {
                     method: "GET",
                     headers: { "Accept": "application/json" }
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Error fetching data. Status: ${response.status}`);
+                if (response.ok === true) {
+                    const subs = await response.json();
+                    const jsonData = JSON.parse(subs);
+                    generateTable(jsonData);
                 }
-
-                const subs = await response.json();
-                const jsonData = JSON.parse(subs);
-                generateTable(jsonData);
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Ошибка при обработке JSON данных");
-            }
+                else {
+                    const error = await response.json();
+                    console.log(error.message);
+                }
         }
 
         async function getTarget() {
-            try {
                 const response = await fetch("/api/requests_target", {
                     method: "GET",
                     headers: { "Accept": "application/json" }
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Error fetching data. Status: ${response.status}`);
+                if (response.ok === true) {
+                    const targets = await response.json();
+                    const jsonData = JSON.parse(targets);
+                    generateTable(jsonData);
                 }
-
-                const targets = await response.json();
-                const jsonData = JSON.parse(targets);
-                generateTable(jsonData);
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Ошибка при обработке JSON данных");
-            }
+                else {
+                    const error = await response.json();
+                    console.log(error.message);
+                }
         }
 
         async function getDrops(getDate, getFactoryId) {
-            try {
                 const response = await fetch("/api/requests_drop", {
                method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
@@ -113,17 +106,15 @@
                 })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Error fetching data. Status: ${response.status}`);
+                if (response.ok === true) {
+                    const drops = await response.json();
+                    const jsonData = JSON.parse(drops);
+                    generateTable(jsonData);
                 }
-
-                const drops = await response.json();
-                const jsonData = JSON.parse(drops);
-                generateTable(jsonData);
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Ошибка при обработке JSON данных");
-            }
+                else {
+                    const error = await response.json();
+                    console.log(error.message);
+                }
         }
 
         function generateTable(jsonData) {
