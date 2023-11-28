@@ -2,7 +2,8 @@ from fastapi import FastAPI, Response, Query, Body, Depends, Request, Form
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
+from sqlalchemy import text
+import json
 from DataBase import *
 
 """uvicorn WebApp:app --reload  """
@@ -147,6 +148,57 @@ async def update_factory(data=Body(), db: Session = Depends(get_db)):
 
 
 # region Requests
+@app.get("/api/requests_subs")
+def get_drop(db: Session = Depends(get_db)):
+
+    time_table = db.query(SubstanceToDrop.substance_idSubstance,
+                          SubstanceToDrop.drop_idDrop,
+                          SubstanceToDrop.concentration_in_drop).all()
+    json_result = json.dumps([
+        {
+            'ID вещества': row[0],
+            'ID сброса': row[1],
+            'Концетрация в сбросе': row[2]
+        }
+        for row in time_table
+    ])
+    return json_result
+
+
+@app.get("/api/requests_target")
+def get_drop(db: Session = Depends(get_db)):
+    time_table = db.query(Target.idTarget, SubstanceToDrop.drop_idDrop, SubstanceToDrop.pdk, SubstanceToDrop.knk,
+                          SubstanceToDrop.concentration_in_target).join(Target,
+                                                                        Target.drop_idDrop == SubstanceToDrop.drop_idDrop).all()
+    json_result = json.dumps([
+        {
+            'ID створа': row[0],
+            'ID сброса': row[1],
+            'ПДК': row[2],
+            'КНК': row[3],
+            'Концетрация в створе': row[4]
+        }
+        for row in time_table
+    ])
+    return json_result
+
+
+@app.post("/api/requests_drop")
+def get_drop(data=Body(), db: Session = Depends(get_db)):
+    time_table = db.query( Factory.idFactory, Drop.idDrop, Drop.date)\
+        .join(Target, Target.drop_idDrop == Drop.idDrop) \
+        .join(Factory, Factory.target_idTarget == Target.idTarget) \
+        .filter(Factory.idFactory == data["factory_id"], Drop.date == data["date"]) \
+        .all()
+    json_result = json.dumps([
+        {
+            'ID предприятия': row[0],
+            'ID сброса': row[1],
+            'Дата': row[2],
+        }
+        for row in time_table
+    ])
+    return json_result
 
 # endregion
 

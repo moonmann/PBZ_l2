@@ -3,10 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <title>Requests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-<ul>
+    <ul>
         <li><a href="/">Назад</a></li>
     </ul>
+
+    <div >
+            <h1>Просмотр списка всех контролируемых веществ для каждого выпуска с
+                концентрациями этих веществ в сточных водах</h1>
+        <button id="getSubList">Получить список</button>
+    </div>
+
+    <div >
+            <h1>Просмотр ПДК, фоновую концентрацию и КНК веществ по всем контрольным
+                створам для каждого выпуска</h1>
+        <button id="getTargetList">Получить список</button>
+    </div>
+
+    <div >
+            <h1>Просмотр перечня всех выбросов для выбранного предприятия в выбранных
+                момент времени</h1>
+            <p>
+                ID предприятия:<br />
+                <input id="getFactoryId" />
+            </p>
+            <p>
+                Дата:<br />
+                <input id="getDate" />
+            </p>
+        <button id="getDropList">Получить список</button>
+    </div>
+
+    <h2>Таблица</h2>
+
+    <table id="myTable">
+        <thead>
+            <tr id="headerRow"></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function getSubs() {
+            try {
+                const response = await fetch("/api/requests_subs", {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error fetching data. Status: ${response.status}`);
+                }
+
+                const subs = await response.json();
+                const jsonData = JSON.parse(subs);
+                generateTable(jsonData);
+            } catch (error) {
+                console.error("Error:", error.message);
+                alert("Ошибка при обработке JSON данных");
+            }
+        }
+
+        async function getTarget() {
+            try {
+                const response = await fetch("/api/requests_target", {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error fetching data. Status: ${response.status}`);
+                }
+
+                const targets = await response.json();
+                const jsonData = JSON.parse(targets);
+                generateTable(jsonData);
+            } catch (error) {
+                console.error("Error:", error.message);
+                alert("Ошибка при обработке JSON данных");
+            }
+        }
+
+        async function getDrops(getDate, getFactoryId) {
+            try {
+                const response = await fetch("/api/requests_drop", {
+               method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    date : getDate,
+                    factory_id: getFactoryId
+                })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error fetching data. Status: ${response.status}`);
+                }
+
+                const drops = await response.json();
+                const jsonData = JSON.parse(drops);
+                generateTable(jsonData);
+            } catch (error) {
+                console.error("Error:", error.message);
+                alert("Ошибка при обработке JSON данных");
+            }
+        }
+
+        function generateTable(jsonData) {
+            const table = document.getElementById("myTable");
+            const headerRow = table.querySelector("#headerRow");
+            const tbody = table.querySelector("tbody");
+
+            headerRow.innerHTML = "";
+            tbody.innerHTML = "";
+
+            for (const key in jsonData[0]) {
+                const th = document.createElement("th");
+                th.appendChild(document.createTextNode(key));
+                headerRow.appendChild(th);
+            }
+
+            for (const data of jsonData) {
+                const row = tbody.insertRow();
+                for (const key in data) {
+                    const cell = row.insertCell();
+                    cell.appendChild(document.createTextNode(data[key]));
+                }
+            }
+        }
+
+        document.getElementById("getSubList").addEventListener("click", async () => {
+        await getSubs();
+        });
+
+        document.getElementById("getTargetList").addEventListener("click", async () => {
+        await getTarget();
+        });
+
+        document.getElementById("getDropList").addEventListener("click", async () => {
+            const date = document.getElementById("getDate").value;
+            const factory_id = document.getElementById("getFactoryId").value;
+            await getDrops(date, factory_id);
+        });
+    </script>
 </body>
 </html>
