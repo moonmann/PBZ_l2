@@ -12,7 +12,7 @@
 
 <h1>Таблица створов</h1>
 <table id="targetTable">
-        <thead> <th>Номер</th> <th>Название</th> <th>Номер сброса</th> </thead>
+        <thead> <th>Номер</th> <th>Название</th> <th>Название сброса</th> </thead>
         <tbody>
         </tbody>
     </table>
@@ -42,7 +42,7 @@
             target_temp.append(target_nameTd);
 
             const target_dropIdTd = document.createElement("td");
-            target_dropIdTd.append(target.drop_idDrop);
+            target_dropIdTd.append(target.drop_drop_name);
             target_temp.append(target_dropIdTd);
 
             return target_temp;
@@ -53,7 +53,7 @@
 
 <h1>Таблица веществ</h1>
 <table id="substanceTable">
-        <thead> <th>Номер</th> <th>Класс опасности</th> <th>ЛВФ</th> <th>Название</th>  <th>Группа</th> </thead>
+        <thead> <th>Номер</th> <th>Название</th> <th>Класс опасности</th> <th>ЛВФ</th>  <th>Группа</th> </thead>
         <tbody>
         </tbody>
     </table>
@@ -78,6 +78,10 @@
             substance_idTd.append(substance.idSubstance);
             substance_temp.append(substance_idTd);
 
+            const substance_substance_nameTd = document.createElement("td");
+            substance_substance_nameTd.append(substance.substance_name);
+            substance_temp.append(substance_substance_nameTd);
+
             const substance_danger_classTd = document.createElement("td");
             substance_danger_classTd.append(substance.danger_class);
             substance_temp.append(substance_danger_classTd);
@@ -85,10 +89,6 @@
             const substance_lvfTd = document.createElement("td");
             substance_lvfTd.append(substance.lvf);
             substance_temp.append(substance_lvfTd);
-
-            const substance_substance_nameTd = document.createElement("td");
-            substance_substance_nameTd.append(substance.substance_name);
-            substance_temp.append(substance_substance_nameTd);
 
             const substance_groupTd = document.createElement("td");
             substance_groupTd.append(substance.group);
@@ -139,7 +139,7 @@
 
 <h1>Таблица водопользования к веществам</h1>
 <table id="waterUseTypeToSubstanceTable">
-        <thead> <th>Номер</th> <th>Номер водопользования</th> <th>Номер вещества</th> </thead>
+        <thead> <th>Номер</th> <th>Название водопользования</th> <th>Название вещества</th> </thead>
         <tbody>
         </tbody>
     </table>
@@ -166,11 +166,11 @@
             water_use_type_to_substance_temp.append(water_use_type_to_substance_idTd);
 
             const water_use_type_to_substance_water_use_type_idTd = document.createElement("td");
-            water_use_type_to_substance_water_use_type_idTd.append(water_use_type_to_substance.waterUseType_idWaterUseType);
+            water_use_type_to_substance_water_use_type_idTd.append(water_use_type_to_substance.waterUseType_water_use_type);
             water_use_type_to_substance_temp.append(water_use_type_to_substance_water_use_type_idTd);
 
             const water_use_type_to_substance_substance_idTd = document.createElement("td");
-            water_use_type_to_substance_substance_idTd.append(water_use_type_to_substance.substance_idSubstance);
+            water_use_type_to_substance_substance_idTd.append(water_use_type_to_substance.substance_substance_name);
             water_use_type_to_substance_temp.append(water_use_type_to_substance_substance_idTd);
 
             return water_use_type_to_substance_temp;
@@ -181,7 +181,7 @@
 
 <h1>Таблица веществ и сбросов</h1>
 <table id="substanceToDropTable">
-        <thead> <th>Номер</th><th>Номер сброса</th> <th>Номер вещества</th> <th>Концентрация в сбросе</th>
+        <thead> <th>Номер</th><th>Название сброса</th> <th>Название вещества</th> <th>Концентрация в сбросе</th>
         <th>Концентрация в контрольном створе</th> <th>ПДК</th> <th>КНК</th>
         </thead>
         <tbody>
@@ -209,11 +209,11 @@
             substance_to_drop_temp.append(substance_to_drop_idTd);
 
             const substance_to_drop_drop_idTd = document.createElement("td");
-            substance_to_drop_drop_idTd.append(substance_to_drop.drop_idDrop);
+            substance_to_drop_drop_idTd.append(substance_to_drop.drop_drop_name);
             substance_to_drop_temp.append(substance_to_drop_drop_idTd);
 
             const substance_to_substance_idTd = document.createElement("td");
-            substance_to_substance_idTd.append(substance_to_drop.substance_idSubstance);
+            substance_to_substance_idTd.append(substance_to_drop.substance_substance_name);
             substance_to_drop_temp.append(substance_to_substance_idTd);
 
             const substance_to_drop_concentration_in_dropTd = document.createElement("td");

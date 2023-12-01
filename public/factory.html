@@ -17,12 +17,12 @@
                     <input id="factoryName" placeholder="Name"/>
                 </p>
                 <p>
-                    Водопользование предприятия:<br />
+                    Номер водопользования:<br />
                     <input id="waterUseType" placeholder="0"/>
                 </p>
                 <p>
                     Номер контрольного створа:<br />
-                    <input id="targetId" placeholder="0"/>
+                    <input id="targetName" placeholder="0"/>
                 </p>
                 <p>
                     <button id="saveFactoryBtn">Сохранить</button>
@@ -39,20 +39,24 @@
 <div >
             <h1>Редактирование предприятия</h1>
             <p>
-                Номер предприятия:<br/>
-                <input type="number" id="editFactoryId" placeholder="0"/>
-            </p>
-            <p>
                 Название предприятия:<br/>
-                <input type="text" id="editFactoryName" placeholder="Name"/>
+                <input type="text" id="editOldFactoryName" placeholder="Name"/>
             </p>
             <p>
-                Водопользование предприятия:<br />
-                <input type="text" id="editWaterUseType" placeholder="0"/>
+                Старое название водопользования:<br />
+                <input type="text" id="editOldWaterUseType" placeholder="0"/>
             </p>
             <p>
-                Номер контрольного створа:<br />
-                <input id="editTargetId" placeholder="0"/>
+                Старое название контрольного створа:<br />
+                <input type="text" id="editOldTargetName" placeholder="0"/>
+            </p>
+            <p>
+                Новое название водопользования:<br />
+                <input type="text" id="editNewWaterUseType" placeholder="0"/>
+            </p>
+            <p>
+                Новое название контрольного створа:<br />
+                <input type="text" id="editNewTargetName" placeholder="0"/>
             </p>
             <p>
                 <button id="editFactoryBtn">Сохранить</button>
@@ -65,14 +69,14 @@
         </tbody>
 </table>
 <script>
-        async function createFactory(factoryName, waterUseType, targetId) {
+        async function createFactory(factoryName, waterUseType, targetName) {
         const response = await fetch("/api/factories", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
                     factory_name : factoryName,
                     water_use_type : waterUseType,
-                    target_id: targetId
+                    target_name: targetName
                 })
             });
             if (response.ok === true) {
@@ -86,26 +90,27 @@
         }
         function resetFactory() {
         document.getElementById("factoryName").value =
-        document.getElementById("targetId").value =
+        document.getElementById("targetName").value =
         document.getElementById("waterUseType").value ="";
         }
 
         document.getElementById("saveFactoryBtn").addEventListener("click", async () => {
         const factory_name = document.getElementById("factoryName").value;
         const water_use_type = document.getElementById("waterUseType").value;
-        const target_id = document.getElementById("targetId").value;
-        await createFactory(factory_name, water_use_type, target_id);
+        const target_name = document.getElementById("targetName").value;
+        await createFactory(factory_name, water_use_type, target_name);
         resetFactory();
         });
-        async function editFactory(factoryId, factoryName, waterUseType, targetId) {
+        async function editFactory(oldFactoryName, oldWaterUseType, oldTargetName, newWaterUseType, newTargetName) {
         const response = await fetch("/api/update_factories", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    factory_id : parseInt(factoryId, 10),
-                    factory_name : factoryName,
-                    water_use_type : waterUseType,
-                    target_id: targetId
+                    old_factory_name : oldFactoryName,
+                    old_water_use_type : oldWaterUseType,
+                    old_target_name: oldTargetName,
+                    new_water_use_type : newWaterUseType,
+                    new_target_name: newTargetName
                 })
             });
             if (response.ok === true) {
@@ -117,19 +122,21 @@
             }
         }
         function resetEditFactory() {
-        document.getElementById("editFactoryId").value =
-        document.getElementById("editFactoryName").value =
-        document.getElementById("editTargetId").value =
-        document.getElementById("editWaterUseType").value = "";
+        document.getElementById("editOldFactoryName").value =
+        document.getElementById("editOldTargetName").value =
+        document.getElementById("editOldWaterUseType").value =
+        document.getElementById("editNewTargetName").value =
+        document.getElementById("editNewWaterUseType").value = "";
         }
 
         document.getElementById("editFactoryBtn").addEventListener("click", async () => {
-        const factory_id = document.getElementById("editFactoryId").value;
-        const factory_name = document.getElementById("editFactoryName").value;
-        const water_use_type = document.getElementById("editWaterUseType").value;
-        const target_id = document.getElementById("editTargetId").value;
-        await editFactory(factory_id, factory_name, water_use_type, target_id);
-        resetEditFactory();
+            const old_factory_name = document.getElementById("editOldFactoryName").value;
+            const old_target_name = document.getElementById("editOldTargetName").value;
+            const old_water_use_type = document.getElementById("editOldWaterUseType").value;
+            const new_target_name = document.getElementById("editNewTargetName").value;
+            const new_water_use_type = document.getElementById("editNewWaterUseType").value;
+            await editFactory(old_factory_name, old_water_use_type, old_target_name, new_water_use_type, new_target_name);
+            resetEditFactory();
         });
 
         async function getFactories() {
@@ -158,12 +165,12 @@
             factory_temp.append(factory_nameTd);
 
             const water_use_typeTd = document.createElement("td");
-            water_use_typeTd.append(factory.waterUseType_idWaterUseType);
+            water_use_typeTd.append(factory.waterUseType_water_use_type);
             factory_temp.append(water_use_typeTd);
 
-            const target_idTd = document.createElement("td");
-            target_idTd.append(factory.target_idTarget);
-            factory_temp.append(target_idTd);
+            const target_nameTd = document.createElement("td");
+            target_nameTd.append(factory.target_target_name);
+            factory_temp.append(target_nameTd);
 
             return factory_temp;
         }

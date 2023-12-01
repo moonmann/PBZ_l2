@@ -39,15 +39,15 @@
     </div>
 
     <div >
-            <h1>Просмотр перечня всех выбросов для выбранного предприятия в выбранных
-                момент времени</h1>
+            <h1>Просмотр перечня всех выбросов для выбранного предприятия в выбранную
+                дату</h1>
             <p>
-                ID предприятия:<br />
-                <input id="getFactoryId" placeholder="0" />
+                Название предприятия:<br />
+                <input id="getFactoryName" type="text" placeholder="Name" />
             </p>
             <p>
                 Дата:<br />
-                <input id="getDate" placeholder="1.1.2000"/>
+                <input id="getDate" type="text" placeholder="1.1.2000"/>
             </p>
         <button id="getDropList">Получить список</button>
     </div>
@@ -96,13 +96,13 @@
                 }
         }
 
-        async function getDrops(getDate, getFactoryId) {
+        async function getDrops(getDate, getFactoryName) {
                 const response = await fetch("/api/requests_drop", {
                method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
                     date : getDate,
-                    factory_id: getFactoryId
+                    factory_name: getFactoryName
                 })
                 });
 
@@ -150,8 +150,8 @@
 
         document.getElementById("getDropList").addEventListener("click", async () => {
             const date = document.getElementById("getDate").value;
-            const factory_id = document.getElementById("getFactoryId").value;
-            await getDrops(date, factory_id);
+            const factory_name = document.getElementById("getFactoryName").value;
+            await getDrops(date, factory_name);
         });
     </script>
 </body>

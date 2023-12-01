@@ -26,7 +26,7 @@ class Target(Base):
 
     idTarget = Column(Integer, primary_key=True)
     target_name = Column(String(100))
-    drop_idDrop = Column(Integer, ForeignKey('Drop.idDrop'))
+    drop_drop_name = Column(String(100), ForeignKey('Drop.drop_name'))
     Drop = relationship('Drop', backref='targets')
 
 
@@ -42,8 +42,8 @@ class Factory(Base):
 
     idFactory = Column(Integer, primary_key=True)
     factory_name = Column(String(100))
-    waterUseType_idWaterUseType = Column(Integer, ForeignKey('WaterUseType.idWaterUseType'))
-    target_idTarget = Column(Integer, ForeignKey('Target.idTarget'))
+    waterUseType_water_use_type = Column(String(100), ForeignKey('WaterUseType.water_use_type'))
+    target_target_name = Column(String(100), ForeignKey('Target.target_name'))
     WaterUseType = relationship('WaterUseType')
     Target = relationship('Target', backref='factories')
 
@@ -61,8 +61,8 @@ class WaterUseTypeToSubstance(Base):
     __tablename__ = 'WaterUseTypeToSubstance'
 
     idWaterUseTypeToSubstance = Column(Integer, primary_key=True)
-    waterUseType_idWaterUseType = Column(Integer, ForeignKey('WaterUseType.idWaterUseType'))
-    substance_idSubstance = Column(Integer, ForeignKey('Substance.idSubstance'))
+    waterUseType_water_use_type = Column(String(100), ForeignKey('WaterUseType.water_use_type'))
+    substance_substance_name = Column(String(100), ForeignKey('Substance.substance_name'))
     WaterUseType = relationship('WaterUseType')
     Substance = relationship('Substance')
 
@@ -75,8 +75,8 @@ class SubstanceToDrop(Base):
     concentration_in_target = Column(Integer)
     pdk = Column(Integer)
     knk = Column(Integer)
-    substance_idSubstance = Column(Integer, ForeignKey('Substance.idSubstance'))
-    drop_idDrop = Column(Integer, ForeignKey('Drop.idDrop'))
+    substance_substance_name = Column(String(100), ForeignKey('Substance.substance_name'))
+    drop_drop_name = Column(String(100), ForeignKey('Drop.drop_name'))
     Substance = relationship('Substance')
     Drop = relationship('Drop', backref='substances')
 
